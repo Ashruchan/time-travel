@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Travel: Science & Fiction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F0D878;
+            --navy: #0B1120;
+            --navy-light: #1a2744;
+            --blue-glow: #4A90D9;
+            --blue-neon: #00D4FF;
+            --white: #F0F0F0;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #000;
+            color: var(--white);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Starfield Background */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity); }
+            50% { opacity: 0.2; }
+        }
+
+        /* Main Container */
+        #presentation {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide-content {
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Cinematic Background Images */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            filter: blur(2px);
+            transition: opacity 1.2s ease, transform 8s ease;
+        }
+
+        .slide.active .bg-image {
+            opacity: 0.2;
+            transform: scale(1.05);
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.95) 100%);
+            z-index: 1;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--white);
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 3.5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--blue-neon);
+            margin-bottom: 15px;
+        }
+
+        p, li {
+            font-size: clamp(1rem, 1.5vw, 1.3rem);
+            line-height: 1.8;
+            color: rgba(240, 240, 240, 0.9);
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+            letter-spacing: 6px;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        /* Glowing Text Animation */
+        .glow-text {
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 0 40px rgba(212, 175, 55, 0.1); }
+            50% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.2); }
+        }
+
+        /* Slide Animations */
+        .slide.active .animate-in {
+            animation: cinematicReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .slide.active .animate-in-delay-1 { animation-delay: 0.2s; opacity: 0; }
+        .slide.active .animate-in-delay-2 { animation-delay: 0.4s; opacity: 0; }
+        .slide.active .animate-in-delay-3 { animation-delay: 0.6s; opacity: 0; }
+        .slide.active .animate-in-delay-4 { animation-delay: 0.8s; opacity: 0; }
+        .slide.active .animate-in-delay-5 { animation-delay: 1.0s; opacity: 0; }
+
+        @keyframes cinematicReveal {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+                filter: blur(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Title Slide Specific */
+        .title-slide h1 {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+        }
+
+        .title-slide .subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            letter-spacing: 8px;
+            margin-bottom: 60px;
+        }
+
+        .student-names {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 40px auto 0;
+        }
+
+        .student-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--gold-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .student-card:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Content Layouts */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .content-with-image {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .slide[data-slide="5"] .two-column {
+            align-items: flex-start;
+        }
+
+        .slide[data-slide="5"] .image-container {
+            max-width: 520px;
+            max-height: 550px;
+            margin: 0 auto;
+        }
+
+        .slide[data-slide="5"] .glass-card {
+            margin-top: 24px;
+        }
+
+        .slide[data-slide="6"] .image-container {
+            max-width: 420px;
+            max-height: 550px;
+            margin: 0 auto;
+        }
+
+        .slide[data-slide="7"] .slide-content {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .slide[data-slide="7"] .dimension-grid {
+            gap: 18px;
+        }
+
+        .slide[data-slide="7"] .dimension-card {
+            padding: 18px;
+        }
+
+        .slide[data-slide="7"] .animate-in-delay-3 {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .slide[data-slide="7"] .animate-in-delay-3 img {
+            max-width: 260px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .image-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.8s ease;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        .image-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--gold), var(--blue-neon), var(--gold));
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(10px);
+        }
+
+        /* Lists */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .feature-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.8rem;
+            top: 5px;
+        }
+
+        /* Quote Styling */
+        .quote-block {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 500;
+            text-align: center;
+            color: var(--white);
+            line-height: 1.6;
+            padding: 40px;
+            position: relative;
+        }
+
+        .quote-block::before,
+        .quote-block::after {
+            content: '"';
+            font-size: 4rem;
+            color: var(--gold);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .quote-block::before {
+            top: 0;
+            left: 20px;
+        }
+
+        .quote-block::after {
+            bottom: -20px;
+            right: 20px;
+        }
+
+        /* Progress Bar */
+        #progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 100;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--blue-neon));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Slide Counter */
+        #slide-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 100;
+        }
+
+        #slide-counter span {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Navigation Controls */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        #prev-btn { left: 30px; }
+        #next-btn { right: 30px; }
+
+        /* Fullscreen Button */
+        #fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        #fullscreen-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+        }
+
+        /* Glitch Effect for Paradox Slide */
+        .glitch-text {
+            position: relative;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); filter: none; }
+            92% { transform: translate(-3px, 2px); filter: hue-rotate(90deg); }
+            94% { transform: translate(3px, -2px); filter: hue-rotate(-90deg); }
+            96% { transform: translate(-2px, 0); filter: none; }
+        }
+
+        /* Dimension Grid Visual */
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .dimension-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .dimension-card:hover {
+            border-color: var(--blue-neon);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.15);
+        }
+
+        .dimension-card .dim-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        /* Wormhole Diagram */
+        .wormhole-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .slide { padding: 40px; }
+            .two-column, .content-with-image {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .student-names {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 30px 20px; }
+            .nav-btn { width: 45px; height: 45px; font-size: 1.2rem; }
+            #prev-btn { left: 15px; }
+            #next-btn { right: 15px; }
+            .student-names { grid-template-columns: 1fr; }
+            .dimension-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Touch-friendly */
+        @media (pointer: coarse) {
+            .nav-btn {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        /* Custom Scrollbar Hidden */
+        ::-webkit-scrollbar { display: none; }
+
+        /* Fade transition for images */
+        .fade-image {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .fade-image.loaded { opacity: 1; }
+
+        /* Cinematic letter spacing animation */
+        .letter-spacing-animate {
+            animation: letterSpace 2s ease forwards;
+        }
+
+        @keyframes letterSpace {
+            from { letter-spacing: 20px; opacity: 0; }
+            to { letter-spacing: 8px; opacity: 1; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div id="starfield"></div>
+
+    <!-- Progress Bar -->
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- Slide Counter -->
+    <div id="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">12</span></div>
+
+    <!-- Navigation -->
+    <button class="nav-btn" id="prev-btn" onclick="prevSlide()">&#10094;</button>
+    <button class="nav-btn" id="next-btn" onclick="nextSlide()">&#10095;</button>
+    <button id="fullscreen-btn" onclick="toggleFullscreen()">FULLSCREEN</button>
+
+    <!-- Presentation -->
+    <div id="presentation">
+
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide" data-slide="1">
+            <div class="bg-overlay"></div>
+            <div class="slide-content" style="text-align: center;">
+                <div class="animate-in">
+                    <p class="subtitle" style="color: var(--blue-neon);">A Cinematic Exploration</p>
+                </div>
+                <div class="animate-in animate-in-delay-1">
+                    <h1 class="glow-text">TIME TRAVEL</h1>
+                </div>
+                <div class="animate-in animate-in-delay-2">
+                    <h2 style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--white);">SCIENCE & FICTION</h2>
+                </div>
+                <div class="animate-in animate-in-delay-3">
+                    <p style="max-width: 700px; margin: 30px auto; color: rgba(255,255,255,0.7);">
+                        Journey through the fabric of spacetime, from Einstein's theories to the cosmic mysteries of interstellar exploration
+                    </p>
+                </div>
+                <div class="animate-in animate-in-delay-4">
+                    <p style="font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 3px; color: var(--gold); margin-bottom: 20px; text-transform: uppercase;">CREDITS</p>
+                    <div class="student-names">
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Ramyanshu</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Program & Presentation Manager</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Aryan</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Vice Presentation Coordinator</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Ashrumochan Rath</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Presentation Designer & Developer</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Aditya Raj</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Research Analyst</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">S.K. Naved</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Data Collection & Research Associate</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Priyam</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Presentation Volunteer</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Subrat</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Presentation Volunteer</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Nikhil</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Presentation Volunteer</div>
+                        </div>
+                        <div class="student-card">
+                            <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Ayush</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Presentation Volunteer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Introduction / What is Time? -->
+        <div class="slide" data-slide="2">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Introduction</p>
+                    <h2>What is Time?</h2>
+                </div>
+                <div class="content-with-image animate-in animate-in-delay-1">
+                    <div>
+                        <p>Time is the progression of existence from the past, through the present, and into the future. It is the dimension in which events occur in sequence, allowing us to distinguish between before and after.</p>
+                        <ul class="feature-list">
+                            <li>Humans experience time as a <strong style="color: var(--gold);">linear flow</strong> — a river moving in one direction</li>
+                            <li>Time is not absolute; it is <strong style="color: var(--gold);">relative</strong> to the observer's frame of reference</li>
+                            <li>Einstein revolutionized our understanding by unifying time with space into <strong style="color: var(--gold);">spacetime</strong></li>
+                            <li>In the cosmic scale, time is intertwined with gravity and velocity</li>
+                        </ul>
+                        <p style="margin-top: 20px; padding: 20px; background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0;">
+                            <em>"Time is not just a clock on the wall — it is the very fabric of the universe itself."</em>
+                        </p>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80" alt="Galaxy" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: What is Time Travel? -->
+        <div class="slide" data-slide="3">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">The Concept</p>
+                    <h2>What is Time Travel?</h2>
+                </div>
+                <div class="two-column animate-in animate-in-delay-1">
+                    <div class="glass-card">
+                        <h3>Definition</h3>
+                        <p>Time travel is the theoretical concept of movement between different points in time, analogous to movement between different points in space.</p>
+                        <p>It involves:</p>
+                        <ul class="feature-list">
+                            <li>Travel to the <strong style="color: var(--blue-neon);">future</strong> through time dilation</li>
+                            <li>Hypothetical travel to the <strong style="color: var(--blue-neon);">past</strong> via wormholes</li>
+                            <li>Manipulation of <strong style="color: var(--blue-neon);">spacetime</strong> curvature</li>
+                        </ul>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=800&q=80" alt="Clock in space" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Einstein & Theory of Relativity -->
+        <div class="slide" data-slide="4">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">The Foundation</p>
+                    <h2>Einstein & Relativity</h2>
+                </div>
+                <div class="content-with-image animate-in animate-in-delay-1">
+                    <div>
+                        <p>Albert Einstein's theories of Special and General Relativity fundamentally changed how we understand time and space.</p>
+                        <div class="glass-card" style="margin: 25px 0;">
+                            <h3>Key Principles</h3>
+                            <ul class="feature-list">
+                                <li><strong style="color: var(--gold);">Time is connected to space</strong> — they form a four-dimensional fabric called spacetime</li>
+                                <li><strong style="color: var(--gold);">Gravity affects time</strong> — clocks run slower in stronger gravitational fields</li>
+                                <li><strong style="color: var(--gold);">Speed affects time</strong> — the faster you move, the slower time passes for you</li>
+                            </ul>
+                        </div>
+                        <p style="font-style: italic; color: var(--gold-light);">"Einstein described gravity not as a force, but as the curvature of spacetime caused by mass and energy."</p>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="idjFg.jpg" alt="Spacetime grid" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Time Dilation -->
+        <div class="slide" data-slide="5">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Cinematic Science</p>
+                    <h2>Time Dilation</h2>
+                </div>
+                <div class="animate-in animate-in-delay-1">
+                    <p style="text-align: center; max-width: 900px; margin: 0 auto 40px; font-size: 1.2rem;">
+                        Time dilation is a real phenomenon predicted by Einstein's theory — and dramatically depicted in Christopher Nolan's <strong style="color: var(--gold);">Interstellar</strong>.
+                    </p>
+                </div>
+                <div class="two-column animate-in animate-in-delay-2">
+                    <div class="glass-card">
+                        <h3>Gravitational Time Dilation</h3>
+                        <p>Near massive objects like black holes, time slows down significantly relative to distant observers.</p>
+                        <div style="margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(212,175,55,0.2);">
+                            <p style="margin: 0; color: var(--gold);"><strong>Interstellar Example:</strong></p>
+                            <p style="margin: 10px 0 0; font-size: 1rem;">On Miller's Planet orbiting Gargantua, 1 hour = 7 years on Earth</p>
+                        </div>
+                        <ul class="feature-list">
+                            <li>Caused by extreme gravitational fields</li>
+                            <li>Verified by GPS satellite corrections</li>
+                            <li>Strongest near black hole event horizons</li>
+                        </ul>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="c5048fb58e7f8076a1bea9996942ef61.jpg" alt="Black hole" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Real-Life Example - Scott Kelly -->
+        <div class="slide" data-slide="6">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Real World Evidence</p>
+                    <h2>The Twin Paradox</h2>
+                </div>
+                <div class="content-with-image animate-in animate-in-delay-1">
+                    <div>
+                        <p>NASA astronaut <strong style="color: var(--gold);">Scott Kelly</strong> spent 340 days aboard the International Space Station while his identical twin brother Mark remained on Earth. This historic "Twin Study" (2015-2016) was designed to measure the physiological effects of spaceflight, but it also provided a real-world test of time dilation. Scott's clock literally ticked slightly slower than Mark's due to his high orbital velocity and exposure to weaker gravity.</p>
+                        <div class="glass-card" style="margin: 25px 0;">
+                            <h3>The Results</h3>
+                            <ul class="feature-list">
+                                <li>Scott aged <strong style="color: var(--blue-neon);">milliseconds slower</strong> than Mark due to relativistic effects</li>
+                                <li>Time dilation from <strong style="color: var(--blue-neon);">orbital velocity</strong> (speeding up time)</li>
+                                <li>Time contraction from <strong style="color: var(--blue-neon);">weaker gravity</strong> (slowing down time)</li>
+                                <li>Net effect: Scott is slightly younger!</li>
+                            </ul>
+                        </div>
+                        <p style="font-size: 1rem; color: rgba(255,255,255,0.6);">This experiment provided real-world validation of Einstein's theories at a human scale.</p>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="Scott_Kelly,_Johnson_Space_Center_portrait,_2019_cropped_2_tif.jpg" alt="Astronaut in space" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Dimensions & 4D Beings -->
+        <div class="slide" data-slide="7">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Beyond Perception</p>
+                    <h2>Dimensions & 4D Beings</h2>
+                </div>
+                <div class="animate-in animate-in-delay-1">
+                    <p style="text-align: center; max-width: 720px; margin: 0 auto 20px; font-size: 1.05rem; line-height: 1.5;">
+                        We are 3D creatures navigating a 4D universe. But what if we could perceive time as just another spatial dimension?
+                    </p>
+                </div>
+                <div class="dimension-grid animate-in animate-in-delay-2">
+                    <div class="dimension-card">
+                        <div class="dim-label">X</div>
+                        <h3>Length</h3>
+                        <p>Horizontal spatial dimension — left and right movement</p>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dim-label">Y</div>
+                        <h3>Height</h3>
+                        <p>Vertical spatial dimension — up and down movement</p>
+                    </div>
+                    <div class="dimension-card">
+                        <div class="dim-label">Z</div>
+                        <h3>Depth</h3>
+                        <p>Forward and backward spatial dimension</p>
+                    </div>
+                </div>
+                <div class="animate-in animate-in-delay-3" style="margin-top: 18px; display: grid; grid-template-columns: 1fr; gap: 18px; align-items: stretch;">
+                    <div class="glass-card" style="text-align: center;">
+                        <h3 style="color: var(--gold);">The Fourth Dimension: Time</h3>
+                        <p>A hypothetical 4D being would see all moments simultaneously — past, present, and future laid out like a landscape. To them, our lives would be like a scroll unrolled in space.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="10f9e13e152e5129166e59dde6148f33.jpg" alt="Dimensions" style="max-width: 220px; width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Wormholes & Einstein-Rosen Bridges -->
+        <div class="slide" data-slide="8">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Theoretical Pathways</p>
+                    <h2>Wormholes</h2>
+                </div>
+                <div class="two-column animate-in animate-in-delay-1">
+                    <div>
+                        <p>A <strong style="color: var(--gold);">wormhole</strong>, or Einstein-Rosen Bridge, is a hypothetical tunnel connecting two distant points in spacetime, potentially enabling faster-than-light travel.</p>
+                        <div class="glass-card" style="margin: 25px 0;">
+                            <h3>How They Work</h3>
+                            <ul class="feature-list">
+                                <li>Two "mouths" connected by a "throat"</li>
+                                <li>Could bridge vast cosmic distances instantly</li>
+                                <li>May also connect different <strong style="color: var(--blue-neon);">points in time</strong></li>
+                                <li>Require <strong style="color: var(--blue-neon);">exotic matter</strong> with negative energy to remain stable</li>
+                            </ul>
+                        </div>
+                        <p style="font-style: italic;">"A wormhole is nature's shortcut through the cosmic web."</p>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow"></div>
+                        <img src="2640c5437b1d7c3dc87796bcbd63c79c.jpg" alt="Wormhole" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Mythology & Time Travel -->
+        <div class="slide" data-slide="9">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">Ancient Wisdom</p>
+                    <h2 style="color: #F0D878;">Mythology & Time</h2>
+                </div>
+                <div class="content-with-image animate-in animate-in-delay-1">
+                    <div>
+                        <div style="display: grid; grid-template-columns: 1fr 120px; gap: 20px; align-items: start; position: relative;">
+                            <div class="glass-card" style="border-color: rgba(240, 216, 120, 0.3);">
+                                <h3 style="color: #F0D878;">The Story of King Kakudmi</h3>
+                                <p>In the <strong style="color: #F0D878;">Vishnu Purana</strong>, King Kakudmi and his daughter Revati travel to Brahma Lok to seek a suitable husband.</p>
+                                <p>When they return:</p>
+                                <ul class="feature-list">
+                                    <li>What seemed like <strong style="color: #F0D878;">moments</strong> in Brahma's realm</li>
+                                    <li>Was <strong style="color: #F0D878;">many ages</strong> passed on Earth</li>
+                                    <li>Everyone they knew had long perished</li>
+                                    <li>Civilizations had risen and fallen</li>
+                                </ul>
+                            </div>
+                            <div style="width: 100%; max-width: 120px; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.35);">
+                                <img src="f66a521fff24ba140876f01cbc1463d8.jpg" alt="Ancient myth" style="width: 100%; display: block;">
+                            </div>
+                        </div>
+                        <div style="margin-top: 25px; padding: 20px; background: rgba(240, 216, 120, 0.05); border-radius: 12px; border-left: 3px solid #F0D878;">
+                            <p style="margin: 0; color: #F0D878;"><strong>Parallel to Science:</strong></p>
+                            <p style="margin: 10px 0 0;">This ancient tale mirrors Einstein's time dilation — time flowing differently in different realms of existence.</p>
+                        </div>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow" style="background: linear-gradient(45deg, #F0D878, #D4AF37, #F0D878);"></div>
+                        <img src="225d1329eb0cbd3d5ea94557e2f7852b.jpg" alt="Cosmic golden" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Paradoxes -->
+        <div class="slide" data-slide="10">
+            <div class="bg-overlay"></div>
+            <div class="slide-content">
+                <div class="animate-in">
+                    <p class="subtitle">The Impossible</p>
+                    <h2 class="glitch-text">Paradoxes</h2>
+                </div>
+                <div class="two-column animate-in animate-in-delay-1">
+                    <div>
+                        <div class="glass-card" style="border-color: rgba(255, 50, 50, 0.3);">
+                            <h3 style="color: #ff6b6b;">The Grandfather Paradox</h3>
+                            <p>If you travel back and prevent your grandfather from meeting your grandmother, you would never be born — but then who traveled back?</p>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <h3>Scientific Problems</h3>
+                            <ul class="feature-list">
+                                <li><strong style="color: #ff6b6b;">Infinite Energy Source Required:</strong> Time travel demands more energy than exists in the observable universe</li>
+                                <li><strong style="color: #ff6b6b;">Conservation of Energy:</strong> Matter appearing from nowhere</li>
+                                <li><strong style="color: #ff6b6b;">Thermodynamics:</strong> Reversing entropy is impossible</li>
+                                <li><strong style="color: #ff6b6b;">Light Speed Engine Needed:</strong> Approaching light speed is physically impossible with current technology</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="image-container">
+                        <div class="image-glow" style="background: linear-gradient(45deg, #ff6b6b, #ff4757, #ff6b6b); opacity: 0.4;"></div>
+                        <img src="data:image/jpeg;base64,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" alt="Abstract paradox" style="border-radius: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Philosophical Perspective -->
+        <div class="slide" data-slide="11">
+            <div class="bg-overlay"></div>
+            <div class="slide-content" style="text-align: center;">
+                <div class="animate-in">
+                    <p class="subtitle">Reflection</p>
+                </div>
+                <div class="animate-in animate-in-delay-1">
+                    <div class="quote-block">
+                        We are all time travelers,<br>
+                        moving at the speed of exactly<br>
+                        <span style="color: var(--gold);">60 minutes per hour</span>
+                    </div>
+                </div>
+                <div class="animate-in animate-in-delay-2" style="max-width: 800px; margin: 40px auto;">
+                    <div class="glass-card" style="text-align: left;">
+                        <p>We often live in the <strong style="color: var(--gold);">past</strong> — burdened by regrets, replaying memories, wishing for different outcomes.</p>
+                        <p style="margin-top: 15px;">Or we escape to the <strong style="color: var(--blue-neon);">future</strong> — anxious about what may come, planning endlessly, missing the now.</p>
+                        <p style="margin-top: 20px; text-align: center; font-family: 'Orbitron', sans-serif; color: var(--gold); font-size: 1.2rem;">
+                            The only moment that truly exists is the <strong>PRESENT</strong>.
+                        </p>
+                    </div>
+                </div>
+                <div class="animate-in animate-in-delay-3">
+                    <p style="color: rgba(255,255,255,0.5); font-size: 1rem; margin-top: 30px;">
+                        Perhaps the greatest journey is not through time, but into awareness.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide" data-slide="12">
+            <div class="bg-overlay"></div>
+            <div class="slide-content" style="text-align: center;">
+                <div class="animate-in">
+                    <p class="subtitle">Final Thoughts</p>
+                    <h2>Conclusion</h2>
+                </div>
+                <div class="animate-in animate-in-delay-1" style="max-width: 900px; margin: 0 auto;">
+                    <div class="glass-card" style="margin-bottom: 30px;">
+                        <div class="two-column" style="text-align: left;">
+                            <div>
+                                <h3 style="color: var(--blue-neon);">Future Travel</h3>
+                                <p>Theoretically possible through:</p>
+                                <ul class="feature-list">
+                                    <li>Near-light-speed travel</li>
+                                    <li>Intense gravitational fields</li>
+                                    <li>Already proven at small scales</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 style="color: #ff6b6b;">Past Travel</h3>
+                                <p>Likely impossible due to:</p>
+                                <ul class="feature-list">
+                                    <li>Causality violations</li>
+                                    <li>Thermodynamic constraints</li>
+                                    <li>Energy requirements beyond reach</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="animate-in animate-in-delay-2">
+                    <h1 style="font-size: clamp(2rem, 4vw, 3.5rem); margin: 40px 0;" class="glow-text">THANK YOU</h1>
+                    <p style="color: rgba(255,255,255,0.5); letter-spacing: 4px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
+                        TIME TRAVEL: SCIENCE & FICTION
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Starfield Generation
+        function createStarfield() {
+            const container = document.getElementById('starfield');
+            const starCount = 200;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--opacity', Math.random() * 0.7 + 0.3);
+                star.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Slide Management
+        let currentSlide = 1;
+        const totalSlides = 12;
+
+        function updateSlide() {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Show current slide
+            const activeSlide = document.querySelector(`[data-slide="${currentSlide}"]`);
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+
+            // Update progress bar
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+
+            // Update counter
+            document.getElementById('current-slide').textContent = currentSlide;
+
+            // Update button visibility
+            document.getElementById('prev-btn').style.opacity = currentSlide === 1 ? '0.3' : '1';
+            document.getElementById('prev-btn').style.pointerEvents = currentSlide === 1 ? 'none' : 'auto';
+            document.getElementById('next-btn').style.opacity = currentSlide === totalSlides ? '0.3' : '1';
+            document.getElementById('next-btn').style.pointerEvents = currentSlide === totalSlides ? 'none' : 'auto';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Click Navigation
+        document.addEventListener('click', (e) => {
+            // Ignore clicks on buttons
+            if (e.target.closest('.nav-btn') || e.target.closest('#fullscreen-btn')) return;
+
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+
+            // Click right side to go next, left side to go previous
+            if (clickX > screenWidth * 0.7) {
+                nextSlide();
+            } else if (clickX < screenWidth * 0.3) {
+                prevSlide();
+            }
+        });
+
+        // Touch Support for Smartboards
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // Fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Initialize
+        createStarfield();
+        updateSlide();
+
+        // Preload images for smoother transitions
+        window.addEventListener('load', () => {
+            document.querySelectorAll('img').forEach(img => {
+                img.classList.add('loaded');
+            });
+        });
+
+        // Prevent context menu on right click for presentation feel
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
