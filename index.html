@@ -313,14 +313,21 @@
         .slide[data-slide="7"] .animate-in-delay-3 {
             margin-top: 30px;
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            align-items: stretch;
+            grid-template-columns: 1.3fr 0.9fr;
+            gap: 30px;
+            align-items: center;
         }
 
         .slide[data-slide="7"] .animate-in-delay-3 img {
-            max-width: 260px;
+            max-width: 100%;
             width: 100%;
+            margin: 0;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .slide[data-slide="7"] .animate-in-delay-3 .image-container {
+            max-width: 420px;
             margin: 0 auto;
         }
 
@@ -648,7 +655,7 @@
                         </div>
                         <div class="student-card">
                             <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Aryan</div>
-                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Vice Presentation Coordinator</div>
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px;">Head Presentation Coordinator</div>
                         </div>
                         <div class="student-card">
                             <div style="font-weight: 600; color: var(--gold-light); font-size: 0.95rem;">Ashrumochan Rath</div>
@@ -863,13 +870,14 @@
                         <p>Forward and backward spatial dimension</p>
                     </div>
                 </div>
-                <div class="animate-in animate-in-delay-3" style="margin-top: 18px; display: grid; grid-template-columns: 1fr; gap: 18px; align-items: stretch;">
+                <div class="animate-in animate-in-delay-3" style="margin-top: 18px;">
                     <div class="glass-card" style="text-align: center;">
                         <h3 style="color: var(--gold);">The Fourth Dimension: Time</h3>
                         <p>A hypothetical 4D being would see all moments simultaneously — past, present, and future laid out like a landscape. To them, our lives would be like a scroll unrolled in space.</p>
                     </div>
-                    <div style="text-align: center;">
-                        <img src="10f9e13e152e5129166e59dde6148f33.jpg" alt="Dimensions" style="max-width: 220px; width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);">
+                    <div class="image-container" style="text-align: center;">
+                        <div class="image-glow"></div>
+                        <img src="10f9e13e152e5129166e59dde6148f33.jpg" alt="Dimensions" style="max-height: 350px; width: 100%; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);">
                     </div>
                 </div>
             </div>
