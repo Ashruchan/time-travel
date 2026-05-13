@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Time Travel: Science & Fiction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-bright: #f0cc6e;
+  --gold-dim: rgba(201,168,76,0.18);
+  --white: #f5f0e8;
+  --off-white: rgba(245,240,232,0.82);
+  --dim: rgba(245,240,232,0.45);
+  --deep: #060910;
+  --navy: #080d1a;
+  --mid: #0d1524;
+  --accent-blue: #4a9eff;
+  --accent-red: #c0392b;
+  --radius: 4px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: var(--deep);
+  color: var(--white);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.1s ease, opacity 0.2s;
+}
+.cursor-outer {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.25s ease, left 0.12s ease, top 0.12s ease;
+}
+
+/* ── SLIDE SYSTEM ── */
+.deck {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(60px);
+  transition: opacity 0.7s cubic-bezier(.4,0,.2,1),
+              transform 0.7s cubic-bezier(.4,0,.2,1),
+              visibility 0s 0.7s;
+  overflow: hidden;
+}
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition: opacity 0.7s cubic-bezier(.4,0,.2,1),
+              transform 0.7s cubic-bezier(.4,0,.2,1),
+              visibility 0s 0s;
+  z-index: 5;
+}
+.slide.exit {
+  opacity: 0;
+  transform: translateX(-60px);
+  z-index: 4;
+}
+
+/* ── ANIMATED STAR FIELD ── */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--dur, 4s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes twinkle {
+  0%,100% { opacity: var(--min-op, 0.15); }
+  50% { opacity: var(--max-op, 0.85); }
+}
+
+/* Nebula glow layers */
+.nebula {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.nebula-1 {
+  background: radial-gradient(ellipse 70% 50% at 15% 30%, rgba(30,60,120,0.35) 0%, transparent 70%);
+}
+.nebula-2 {
+  background: radial-gradient(ellipse 50% 70% at 85% 70%, rgba(80,20,80,0.28) 0%, transparent 65%);
+}
+.nebula-3 {
+  background: radial-gradient(ellipse 40% 40% at 50% 50%, rgba(201,168,76,0.05) 0%, transparent 70%);
+}
+
+/* ── SLIDE CONTENT LAYOUTS ── */
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 8vw;
+}
+
+/* ── DECORATIVE FRAME LINES ── */
+.frame {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+}
+.frame-tl {
+  top: 2.5rem; left: 2.5rem;
+  width: 80px; height: 80px;
+  border-top: 1px solid var(--gold);
+  border-left: 1px solid var(--gold);
+  opacity: 0.5;
+}
+.frame-br {
+  bottom: 2.5rem; right: 2.5rem;
+  width: 80px; height: 80px;
+  border-bottom: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.5;
+}
+.frame-tr {
+  top: 2.5rem; right: 2.5rem;
+  width: 80px; height: 80px;
+  border-top: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.5;
+}
+.frame-bl {
+  bottom: 2.5rem; left: 2.5rem;
+  width: 80px; height: 80px;
+  border-bottom: 1px solid var(--gold);
+  border-left: 1px solid var(--gold);
+  opacity: 0.5;
+}
+
+/* ── SLIDE NUMBER ── */
+.slide-num {
+  position: fixed;
+  top: 50%;
+  right: 2.2rem;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.slide-num span {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: rgba(201,168,76,0.5);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.dot-track {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.25);
+  border: 1px solid rgba(201,168,76,0.3);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.dot.active {
+  background: var(--gold);
+  transform: scale(1.4);
+}
+
+/* ── PROGRESS LINE ── */
+.progress-wrap {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  z-index: 90;
+  background: rgba(255,255,255,0.04);
+}
+.progress-fill {
+  width: 100%;
+  background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
+  transition: height 0.5s ease;
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* ── NAV BUTTONS ── */
+.nav-btns {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.nav-btns button {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.4rem;
+  border: 1px solid rgba(201,168,76,0.35);
+  background: rgba(6,9,16,0.7);
+  color: var(--gold);
+  cursor: none;
+  transition: all 0.25s;
+  backdrop-filter: blur(8px);
+}
+.nav-btns button:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+.slide-counter-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: rgba(201,168,76,0.5);
+  padding: 0.65rem 1rem;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* ──────────────────────────────────────
+   SLIDE 1: TITLE
+────────────────────────────────────── */
+.slide-title .content {
+  align-items: center;
+  text-align: center;
+  padding: 0 12vw;
+}
+.slide-title .ornament {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+  margin: 0 auto 2.5rem;
+}
+.slide-title .pretitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.slide-title h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 0.92;
+  color: var(--white);
+  text-shadow: 0 0 60px rgba(201,168,76,0.18);
+  margin-bottom: 0.3rem;
+}
+.slide-title h1 span {
+  display: block;
+  font-size: 0.38em;
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  margin-top: 0.6rem;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+}
+.slide-title .tagline {
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-style: italic;
+  color: var(--dim);
+  margin: 2.5rem auto 3rem;
+  max-width: 38rem;
+  line-height: 1.7;
+  font-weight: 300;
+}
+.members-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: 640px;
+}
+.member {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(201,168,76,0.2);
+  color: rgba(201,168,76,0.7);
+  background: rgba(201,168,76,0.04);
+}
+
+/* ── SECTION DIVIDER SLIDE ── */
+.slide-divider .content {
+  align-items: center;
+  text-align: center;
+}
+.slide-divider .chapter-num {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(6rem, 18vw, 14rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(201,168,76,0.15);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  z-index: 1;
+}
+.slide-divider .chapter-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+.slide-divider h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 1.5rem;
+}
+.slide-divider .divider-line {
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── CONTENT SLIDES ── */
+.slide-content .layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6vw;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+
+h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  margin-bottom: 1.8rem;
+}
+h2 em {
+  font-style: italic;
+  color: var(--gold-bright);
+}
+
+.body-text {
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  line-height: 1.85;
+  color: var(--off-white);
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+.body-text strong { color: var(--gold-bright); font-weight: 400; }
+
+.highlight-box {
+  border-left: 2px solid var(--gold);
+  padding: 1rem 1.4rem;
+  background: var(--gold-dim);
+  margin-top: 1.5rem;
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: var(--off-white);
+  line-height: 1.7;
+}
+
+/* Visual panel */
+.visual-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── FULL-WIDTH CONTENT (no split) ── */
+.slide-wide .content {
+  align-items: center;
+  text-align: center;
+  padding: 0 10vw;
+}
+.slide-wide h2 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  max-width: 900px;
+}
+.slide-wide .body-text {
+  max-width: 780px;
+  margin: 0 auto 1rem;
+  font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+}
+
+/* ── QUOTE SLIDE ── */
+.slide-quote .content {
+  align-items: center;
+  text-align: center;
+  padding: 0 12vw;
+}
+.quote-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 8rem;
+  line-height: 0.5;
+  color: var(--gold);
+  opacity: 0.25;
+  margin-bottom: 1rem;
+}
+.quote-text {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+}
+.quote-attr {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── TIMELINE / LIST ── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-top: 1rem;
+}
+.tl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+.tl-dot {
+  flex-shrink: 0;
+  width: 9px; height: 9px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  margin-top: 0.5rem;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(201,168,76,0.5);
+}
+.tl-text {
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  color: var(--off-white);
+  line-height: 1.7;
+  font-weight: 300;
+}
+.tl-text strong { color: var(--gold-bright); font-weight: 400; }
+
+/* ── SVG DIAGRAM ── */
+.diagram {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ── CONCLUSION ── */
+.slide-conclusion .content {
+  align-items: center;
+  text-align: center;
+}
+.conclusion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  max-width: 800px;
+  width: 100%;
+}
+.concl-card {
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 1.5rem;
+  background: rgba(201,168,76,0.04);
+  text-align: left;
+}
+.concl-card .card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.concl-card .card-label::before {
+  content: '';
+  display: inline-block;
+  width: 14px; height: 1px;
+  background: var(--gold);
+}
+.concl-card p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--off-white);
+  font-weight: 300;
+}
+
+/* ── THANK YOU ── */
+.slide-end .content {
+  align-items: center;
+  text-align: center;
+}
+.end-big {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: transparent;
+  background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 40%, var(--white) 70%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+.end-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.5);
+}
+
+/* ── PARTICLE / WORMHOLE ANIMATION ── */
+.wormhole-wrap {
+  width: 280px; height: 280px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wormhole-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  animation: worm-spin var(--sp, 6s) linear infinite;
+}
+@keyframes worm-spin {
+  from { transform: rotate(0deg) rotateY(var(--tilt, 60deg)); }
+  to { transform: rotate(360deg) rotateY(var(--tilt, 60deg)); }
+}
+.clock-wrap {
+  width: 240px; height: 240px;
+  position: relative;
+}
+
+/* ── PLANET / RELATIVITY VISUAL ── */
+.planet-visual {
+  width: 260px; height: 260px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── ENTRY ANIMATIONS ── */
+.slide.active .anim-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(.4,0,.2,1) both;
+}
+.slide.active .anim-fade-up:nth-child(2) { animation-delay: 0.1s; }
+.slide.active .anim-fade-up:nth-child(3) { animation-delay: 0.2s; }
+.slide.active .anim-fade-up:nth-child(4) { animation-delay: 0.3s; }
+.slide.active .anim-fade-up:nth-child(5) { animation-delay: 0.4s; }
+.slide.active .anim-fade-up:nth-child(6) { animation-delay: 0.5s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── VIGNETTE ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(6,9,16,0.6) 100%);
+}
+
+/* ── SCAN LINE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+@media (max-width: 800px) {
+  .slide-content .layout { grid-template-columns: 1fr; gap: 2rem; }
+  .visual-panel { display: none; }
+  .conclusion-grid { grid-template-columns: 1fr; }
+  .members-grid { max-width: 280px; }
+  .slide-num { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-outer" id="cursorOuter"></div>
+
+<!-- Background effects -->
+<div class="starfield" id="starfield"></div>
+<div class="nebula nebula-1"></div>
+<div class="nebula nebula-2"></div>
+<div class="nebula nebula-3"></div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-fill" id="progressFill" style="height:0%"></div>
+</div>
+
+<!-- Side dot nav -->
+<div class="slide-num">
+  <div class="dot-track" id="dotTrack"></div>
+</div>
+
+<div class="deck" id="deck">
+
+<!-- ════════════════ SLIDE 1: TITLE ════════════════ -->
+<section class="slide slide-title active" id="slide-0">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="frame frame-tr"></div>
+  <div class="frame frame-bl"></div>
+  <div class="content">
+    <div class="ornament anim-fade-up"></div>
+    <p class="pretitle anim-fade-up">A Presentation on</p>
+    <h1 class="anim-fade-up">Time Travel<span>Science &amp; Fiction</span></h1>
+    <p class="tagline anim-fade-up">Exploring relativity, black holes, dimensions, paradoxes, mythology, and the nature of time itself.</p>
+    <div class="members-grid anim-fade-up">
+      <div class="member">Student Name 1</div>
+      <div class="member">Student Name 2</div>
+      <div class="member">Student Name 3</div>
+      <div class="member">Student Name 4</div>
+      <div class="member">Student Name 5</div>
+      <div class="member">Student Name 6</div>
+      <div class="member">Student Name 7</div>
+      <div class="member">Student Name 8</div>
+      <div class="member">Student Name 9</div>
+      <div class="member">Student Name 10</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 2: WHAT IS TIME ════════════════ -->
+<section class="slide slide-wide" id="slide-1">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Chapter I — Foundations</p>
+    <h2 class="anim-fade-up">What is <em>Time?</em></h2>
+    <p class="body-text anim-fade-up">
+      Time is the continuous progression of events from the past through the present into the future. 
+      For most of human history, we treated it as an absolute — a constant river flowing at the same 
+      rate everywhere in the universe.
+    </p>
+    <p class="body-text anim-fade-up">
+      Modern physics shattered this view. Einstein revealed that time is <strong>elastic</strong> — 
+      it bends, stretches, and slows depending on speed and gravity. Space and time are not 
+      separate: they form a single four-dimensional fabric called <strong>spacetime</strong>.
+    </p>
+    <div class="highlight-box anim-fade-up">
+      "Time is what prevents everything from happening at once." — John Archibald Wheeler
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 3: WHAT IS TIME TRAVEL ════════════════ -->
+<section class="slide slide-content" id="slide-2">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <div class="layout">
+      <div>
+        <p class="eyebrow anim-fade-up">Chapter I — Foundations</p>
+        <h2 class="anim-fade-up">What is <em>Time Travel?</em></h2>
+        <p class="body-text anim-fade-up">
+          Time travel is the concept of moving between different points in time, 
+          analogous to how we move through space. Crucially, it is not entirely 
+          forbidden by the laws of physics.
+        </p>
+        <div class="timeline anim-fade-up">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Forward travel</strong> — Already proven. Moving at high speed or near massive gravity wells causes clocks to tick slower.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Backward travel</strong> — Theoretically possible via wormholes, but faces enormous physical and logical obstacles.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Einstein's insight</strong> — The laws of physics do not explicitly rule out time travel, they simply make it extraordinarily difficult.</p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-panel anim-fade-up">
+        <svg class="diagram" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Timeline arrow -->
+          <defs>
+            <linearGradient id="tl-grad" x1="0" y1="0" x2="380" y2="0">
+              <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.1"/>
+              <stop offset="50%" stop-color="#c9a84c" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#f0cc6e" stop-opacity="0.3"/>
+            </linearGradient>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#c9a84c"/>
+            </marker>
+          </defs>
+          <!-- Spacetime grid lines -->
+          <g opacity="0.12">
+            <line x1="40" y1="340" x2="340" y2="40" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="80" y1="340" x2="340" y2="80" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="120" y1="340" x2="340" y2="120" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="160" y1="340" x2="340" y2="160" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="40" y1="40" x2="340" y2="340" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="40" y1="80" x2="300" y2="340" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="40" y1="120" x2="260" y2="340" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="40" y1="160" x2="220" y2="340" stroke="#4a9eff" stroke-width="1"/>
+          </g>
+          <!-- Forward time arrow -->
+          <line x1="60" y1="310" x2="310" y2="60" stroke="url(#tl-grad)" stroke-width="2.5" marker-end="url(#arr)"/>
+          <!-- Past label -->
+          <text x="55" y="332" fill="#c9a84c" font-family="Space Mono" font-size="11" letter-spacing="2" opacity="0.7">PAST</text>
+          <!-- Future label -->
+          <text x="285" y="48" fill="#f0cc6e" font-family="Space Mono" font-size="11" letter-spacing="2" opacity="0.9">FUTURE</text>
+          <!-- Now dot -->
+          <circle cx="190" cy="190" r="8" fill="#c9a84c"/>
+          <circle cx="190" cy="190" r="20" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3 4" opacity="0.4"/>
+          <text x="208" y="186" fill="#f5f0e8" font-family="Crimson Pro" font-size="14" font-style="italic" opacity="0.8">now</text>
+          <!-- Axes labels -->
+          <text x="24" y="194" fill="#4a9eff" font-family="Space Mono" font-size="9" opacity="0.5">SPACE</text>
+          <text x="170" y="370" fill="#4a9eff" font-family="Space Mono" font-size="9" opacity="0.5">TIME</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 4: EINSTEIN ════════════════ -->
+<section class="slide slide-content" id="slide-3">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <div class="layout">
+      <div>
+        <p class="eyebrow anim-fade-up">Chapter II — Physics</p>
+        <h2 class="anim-fade-up">Einstein &amp; <em>Relativity</em></h2>
+        <p class="body-text anim-fade-up">
+          Albert Einstein's Special and General Theories of Relativity (1905–1915) permanently 
+          changed our understanding of time. He showed that time and space form a single fabric — 
+          <strong>spacetime</strong> — that can be warped by mass, energy, and velocity.
+        </p>
+        <p class="body-text anim-fade-up">
+          Einstein described time like a river: near massive objects such as <strong>black holes</strong>, 
+          its flow slows measurably. The faster you move through space, the slower you move through time.
+        </p>
+        <div class="highlight-box anim-fade-up">
+          <strong>E = mc²</strong> — Energy and mass are equivalent, and the speed of light 
+          is the cosmic speed limit that governs the relationship between space and time.
+        </div>
+      </div>
+      <div class="visual-panel anim-fade-up">
+        <!-- Spacetime curvature diagram -->
+        <svg class="diagram" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="mass-glow" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.6"/>
+              <stop offset="40%" stop-color="#c9a84c" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Grid lines warped toward center mass -->
+          <g opacity="0.25" stroke="#4a9eff" stroke-width="1">
+            <!-- Horizontal lines warping down toward center -->
+            <path d="M40,80 C120,80 150,105 190,115 C230,125 260,80 340,80"/>
+            <path d="M40,130 C110,130 145,148 190,158 C235,168 270,130 340,130"/>
+            <path d="M40,180 C100,180 140,200 190,215 C240,230 280,180 340,180"/>
+            <path d="M40,230 C100,220 140,230 190,240 C240,250 280,228 340,230"/>
+            <path d="M40,280 C110,275 150,278 190,282 C230,286 270,275 340,280"/>
+            <!-- Vertical lines -->
+            <path d="M80,40 C80,120 95,155 100,195 C105,235 80,270 80,340"/>
+            <path d="M130,40 C130,115 140,148 145,195 C150,242 130,270 130,340"/>
+            <path d="M180,40 C180,100 185,130 190,180 C195,230 180,280 180,340"/>
+            <path d="M230,40 C230,115 220,148 215,195 C210,242 230,270 230,340"/>
+            <path d="M280,40 C280,120 265,155 260,195 C255,235 280,270 280,340"/>
+          </g>
+          <!-- Central mass glow -->
+          <circle cx="190" cy="190" r="80" fill="url(#mass-glow)"/>
+          <circle cx="190" cy="190" r="30" fill="#c9a84c" opacity="0.9"/>
+          <circle cx="190" cy="190" r="30" fill="none" stroke="#f0cc6e" stroke-width="2"/>
+          <text x="190" y="195" fill="#060910" font-family="Cinzel" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">MASS</text>
+          <!-- Labels -->
+          <text x="190" y="355" fill="#4a9eff" font-family="Space Mono" font-size="9" text-anchor="middle" opacity="0.6">SPACETIME CURVATURE</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 5: TIME DILATION ════════════════ -->
+<section class="slide slide-content" id="slide-4">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <div class="layout">
+      <div>
+        <p class="eyebrow anim-fade-up">Chapter II — Physics</p>
+        <h2 class="anim-fade-up"><em>Time Dilation</em></h2>
+        <p class="body-text anim-fade-up">
+          Time dilation is not science fiction — it is a measured, confirmed phenomenon. 
+          The faster an object moves, or the stronger the gravitational field it sits in, 
+          the slower its clock ticks relative to an outside observer.
+        </p>
+        <div class="timeline anim-fade-up">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Interstellar (2014)</strong> — Near the black hole Gargantua, 1 hour on Miller's Planet equals 7 years on Earth. A dramatic but physically grounded idea.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>GPS Satellites</strong> — Their clocks drift by ~38 microseconds per day due to relativity. Without corrections, GPS would be off by kilometers.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Muon particles</strong> — Cosmic ray muons that should decay in microseconds reach Earth's surface because they travel near light speed — their time slows.</p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-panel anim-fade-up">
+        <svg class="diagram" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bh-grad" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stop-color="#000" stop-opacity="1"/>
+              <stop offset="70%" stop-color="#1a0d00" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#c9a84c" stop-opacity="0.3"/>
+            </linearGradient>
+            <radialGradient id="bh-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#000" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#ff7700" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#ff7700" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Accretion disk rings -->
+          <ellipse cx="190" cy="200" rx="160" ry="30" stroke="#c9a84c" stroke-width="1.5" opacity="0.3" fill="none"/>
+          <ellipse cx="190" cy="200" rx="130" ry="22" stroke="#ff9933" stroke-width="1" opacity="0.4" fill="none"/>
+          <ellipse cx="190" cy="200" rx="100" ry="16" stroke="#ffbb66" stroke-width="2" opacity="0.6" fill="none"/>
+          <!-- Black hole body -->
+          <circle cx="190" cy="195" r="62" fill="url(#bh-glow)"/>
+          <circle cx="190" cy="195" r="44" fill="#000"/>
+          <!-- Event horizon ring -->
+          <circle cx="190" cy="195" r="44" stroke="#ff9933" stroke-width="1.5" opacity="0.8" fill="none"/>
+          <!-- Time labels -->
+          <text x="190" y="60" fill="#f0cc6e" font-family="Space Mono" font-size="9" text-anchor="middle" letter-spacing="1">FAR FROM BLACK HOLE</text>
+          <text x="190" y="72" fill="#f5f0e8" font-family="Crimson Pro" font-size="13" text-anchor="middle" font-style="italic">time flows normally</text>
+          <text x="190" y="360" fill="#ff9933" font-family="Space Mono" font-size="9" text-anchor="middle" letter-spacing="1">NEAR EVENT HORIZON</text>
+          <text x="190" y="348" fill="#ffcc88" font-family="Crimson Pro" font-size="13" text-anchor="middle" font-style="italic">time almost stops</text>
+          <!-- Arrows -->
+          <line x1="190" y1="78" x2="190" y2="148" stroke="#f0cc6e" stroke-width="1" stroke-dasharray="4 3" opacity="0.5" marker-end="url(#arr2)"/>
+          <defs>
+            <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#c9a84c" opacity="0.6"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 6: REAL WORLD — SCOTT KELLY ════════════════ -->
+<section class="slide slide-wide" id="slide-5">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Chapter II — Real Evidence</p>
+    <h2 class="anim-fade-up">A Real-World Example:<br><em>Scott Kelly</em></h2>
+    <p class="body-text anim-fade-up">
+      Astronaut Scott Kelly spent 340 days aboard the International Space Station. 
+      Upon returning to Earth, scientists compared him to his identical twin brother Mark, 
+      who stayed on the ground.
+    </p>
+    <p class="body-text anim-fade-up">
+      Due to the ISS's orbital speed and slightly reduced gravity, Scott's clocks ticked 
+      fractionally slower. He returned to Earth having aged <strong>approximately 5 milliseconds less</strong> 
+      than his twin — a tiny but real and measured instance of time travel into the future.
+    </p>
+    <div class="highlight-box anim-fade-up" style="max-width:700px; margin: 1.5rem auto 0;">
+      This experiment confirms: forward time travel is not fiction. It is physics. We simply lack 
+      the technology to make the effect dramatic.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 7: WORMHOLES ════════════════ -->
+<section class="slide slide-content" id="slide-6">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <div class="layout">
+      <div>
+        <p class="eyebrow anim-fade-up">Chapter III — Theory</p>
+        <h2 class="anim-fade-up"><em>Wormholes</em></h2>
+        <p class="body-text anim-fade-up">
+          A wormhole — formally an <strong>Einstein–Rosen bridge</strong> — is a hypothetical 
+          tunnel connecting two separate points in spacetime. Predicted by General Relativity, 
+          they have never been observed but remain an active area of theoretical physics.
+        </p>
+        <div class="timeline anim-fade-up">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Traversable wormholes</strong> would require exotic matter with negative energy density to stay open — unknown to exist.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Quantum wormholes</strong> — Stephen Hawking and others suggested microscopic wormholes may flicker in and out of existence at the quantum scale.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text">If one mouth of a wormhole is accelerated or placed near a gravitational field, the two ends could connect <strong>different moments in time</strong>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-panel anim-fade-up">
+        <svg class="diagram" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="wh1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#4a9eff" stop-opacity="0.8"/>
+              <stop offset="60%" stop-color="#4a9eff" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#4a9eff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="wh2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.8"/>
+              <stop offset="60%" stop-color="#c9a84c" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Top universe plane -->
+          <ellipse cx="190" cy="105" rx="140" ry="28" fill="none" stroke="#4a9eff" stroke-width="1" opacity="0.4"/>
+          <!-- Grid on top plane -->
+          <g opacity="0.15" stroke="#4a9eff" stroke-width="1">
+            <line x1="50" y1="85" x2="330" y2="85"/>
+            <line x1="50" y1="105" x2="330" y2="105"/>
+            <line x1="50" y1="125" x2="330" y2="125"/>
+            <line x1="110" y1="77" x2="110" y2="133"/>
+            <line x1="190" y1="77" x2="190" y2="133"/>
+            <line x1="270" y1="77" x2="270" y2="133"/>
+          </g>
+          <!-- Bottom universe plane -->
+          <ellipse cx="190" cy="275" rx="140" ry="28" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+          <g opacity="0.15" stroke="#c9a84c" stroke-width="1">
+            <line x1="50" y1="255" x2="330" y2="255"/>
+            <line x1="50" y1="275" x2="330" y2="275"/>
+            <line x1="50" y1="295" x2="330" y2="295"/>
+            <line x1="110" y1="247" x2="110" y2="303"/>
+            <line x1="190" y1="247" x2="190" y2="303"/>
+            <line x1="270" y1="247" x2="270" y2="303"/>
+          </g>
+          <!-- Wormhole tunnel -->
+          <path d="M165,105 C145,140 145,240 165,275" stroke="#4a9eff" stroke-width="1.5" opacity="0.5" fill="none"/>
+          <path d="M215,105 C235,140 235,240 215,275" stroke="#c9a84c" stroke-width="1.5" opacity="0.5" fill="none"/>
+          <!-- Tunnel fill -->
+          <path d="M165,105 C145,140 145,240 165,275 C175,280 205,280 215,275 C235,240 235,140 215,105 C205,100 175,100 165,105Z" 
+                fill="url(#wh1)" opacity="0.15"/>
+          <!-- Mouth glows -->
+          <ellipse cx="190" cy="105" rx="26" ry="10" fill="url(#wh1)" opacity="0.6"/>
+          <ellipse cx="190" cy="275" rx="26" ry="10" fill="url(#wh2)" opacity="0.6"/>
+          <!-- Labels -->
+          <text x="190" y="52" fill="#4a9eff" font-family="Space Mono" font-size="9" text-anchor="middle" letter-spacing="2" opacity="0.7">UNIVERSE A — PAST</text>
+          <text x="190" y="328" fill="#c9a84c" font-family="Space Mono" font-size="9" text-anchor="middle" letter-spacing="2" opacity="0.7">UNIVERSE B — FUTURE</text>
+          <!-- Center label -->
+          <text x="190" y="188" fill="#f5f0e8" font-family="Crimson Pro" font-size="11" text-anchor="middle" font-style="italic" opacity="0.5">shortcut</text>
+          <text x="190" y="202" fill="#f5f0e8" font-family="Crimson Pro" font-size="11" text-anchor="middle" font-style="italic" opacity="0.5">through spacetime</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 8: DIMENSIONS ════════════════ -->
+<section class="slide slide-wide" id="slide-7">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Chapter III — Speculation</p>
+    <h2 class="anim-fade-up">Dimensions &amp; <em>Higher Beings</em></h2>
+    <p class="body-text anim-fade-up">
+      We navigate three spatial dimensions — length, width, depth — and experience one dimension of time, 
+      always moving forward. This limits our perception of causality and sequence.
+    </p>
+    <p class="body-text anim-fade-up">
+      A hypothetical <strong>four-dimensional observer</strong> might perceive our entire timeline — 
+      past, present, and future — simultaneously, the way we view a painting: all moments at once. 
+      Such a being could, in principle, move through time the way we move through a room.
+    </p>
+    <div class="highlight-box anim-fade-up" style="max-width: 680px; margin: 1.5rem auto 0;">
+      This idea appears in <em>Interstellar</em>'s tesseract sequence, where Cooper experiences 
+      his daughter's timeline as a spatial dimension he can traverse and even interact with.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 9: MYTHOLOGY ════════════════ -->
+<section class="slide slide-wide" id="slide-8">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Chapter IV — Culture</p>
+    <h2 class="anim-fade-up">Mythology &amp; <em>Ancient Narratives</em></h2>
+    <p class="body-text anim-fade-up">
+      The concept of distorted time is not new. Thousands of years before Einstein, 
+      ancient civilizations told stories that parallel modern physics.
+    </p>
+    <p class="body-text anim-fade-up">
+      In the <strong>Vishnu Purana</strong>, King Kakudmi visits Brahma Lok with his daughter Revati 
+      to seek a husband for her. After a brief audience with Brahma, they return to Earth — only to 
+      discover that entire cosmic ages have passed, and everyone they knew is long gone.
+    </p>
+    <p class="body-text anim-fade-up">
+      Other examples include the Japanese tale of <strong>Urashima Tarō</strong>, a fisherman who 
+      spends what feels like days in an undersea palace, returning to find 300 years have elapsed.
+    </p>
+    <div class="highlight-box anim-fade-up" style="max-width: 680px; margin: 1.5rem auto 0;">
+      These stories suggest humanity has long intuited that time is not fixed — long before 
+      the mathematics to describe it existed.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 10: PARADOXES ════════════════ -->
+<section class="slide slide-content" id="slide-9">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <div class="layout">
+      <div>
+        <p class="eyebrow anim-fade-up">Chapter V — Limits</p>
+        <h2 class="anim-fade-up">Paradoxes &amp; <em>Constraints</em></h2>
+        <p class="body-text anim-fade-up">
+          Backward time travel faces not just physical obstacles, but deep <strong>logical contradictions</strong>. 
+          These paradoxes reveal why causality is so fundamental to our understanding of reality.
+        </p>
+        <div class="timeline anim-fade-up">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Grandfather Paradox</strong> — If you travel back and prevent your grandparent from having children, you are never born, so you never travel back. A logical loop with no exit.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Bootstrap Paradox</strong> — An object or information is sent back in time and becomes the source of itself, with no clear origin point.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <p class="tl-text"><strong>Novikov Self-Consistency</strong> — A proposed resolution: the timeline is fixed. If you travel to the past, your actions were always already part of history. You cannot change what happened.</p>
+          </div>
+        </div>
+      </div>
+      <div class="visual-panel anim-fade-up">
+        <svg class="diagram" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Paradox loop visualization -->
+          <defs>
+            <linearGradient id="loop-g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#c0392b"/>
+              <stop offset="50%" stop-color="#c9a84c"/>
+              <stop offset="100%" stop-color="#4a9eff"/>
+            </linearGradient>
+            <marker id="loop-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#c9a84c"/>
+            </marker>
+          </defs>
+          <!-- Circular paradox loop -->
+          <circle cx="190" cy="190" r="110" stroke="url(#loop-g)" stroke-width="2" fill="none" stroke-dasharray="8 4"/>
+          <!-- Causal arrows around the loop -->
+          <path d="M190,80 L220,95" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <path d="M295,155 L295,190" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <path d="M265,270 L240,285" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <path d="M140,295 L115,275" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <path d="M85,220 L85,190" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <path d="M115,108 L140,94" stroke="#c9a84c" stroke-width="1.5" marker-end="url(#loop-arr)"/>
+          <!-- Center -->
+          <circle cx="190" cy="190" r="28" fill="#c0392b" opacity="0.15"/>
+          <circle cx="190" cy="190" r="28" stroke="#c0392b" stroke-width="1.5" fill="none"/>
+          <text x="190" y="187" fill="#f5f0e8" font-family="Cinzel" font-size="8" text-anchor="middle" letter-spacing="1">PARA</text>
+          <text x="190" y="199" fill="#f5f0e8" font-family="Cinzel" font-size="8" text-anchor="middle" letter-spacing="1">DOX</text>
+          <!-- Labels at compass points -->
+          <text x="190" y="52" fill="#f0cc6e" font-family="Space Mono" font-size="8" text-anchor="middle">CAUSE</text>
+          <text x="328" y="194" fill="#f0cc6e" font-family="Space Mono" font-size="8" text-anchor="middle">EFFECT</text>
+          <text x="190" y="340" fill="#f0cc6e" font-family="Space Mono" font-size="8" text-anchor="middle">TIME TRAVEL</text>
+          <text x="52" y="194" fill="#f0cc6e" font-family="Space Mono" font-size="8" text-anchor="middle">LOOP</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 11: PHILOSOPHICAL REFLECTION ════════════════ -->
+<section class="slide slide-quote" id="slide-10">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="frame frame-tr"></div>
+  <div class="frame frame-bl"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Chapter VI — Reflection</p>
+    <div class="quote-mark anim-fade-up">"</div>
+    <p class="quote-text anim-fade-up">
+      We are all time travelers, moving at exactly one second per second — forward.
+    </p>
+    <p class="quote-attr anim-fade-up">— A Philosophical View of Time</p>
+    <p class="body-text anim-fade-up" style="margin-top: 2rem; max-width: 660px;">
+      Some people live mentally in the past — trapped in memory and regret. Others drift 
+      into an imagined future — lost in anxiety or fantasy. The present is the only place 
+      where experience actually occurs, and where meaningful choices can be made.
+    </p>
+    <p class="body-text anim-fade-up">
+      Perhaps the greatest time travel is learning to inhabit the now fully.
+    </p>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 12: CONCLUSION ════════════════ -->
+<section class="slide slide-conclusion" id="slide-11">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="content">
+    <p class="eyebrow anim-fade-up">Summary</p>
+    <h2 class="anim-fade-up">Conclusion</h2>
+    <div class="conclusion-grid anim-fade-up">
+      <div class="concl-card">
+        <div class="card-label">Proven</div>
+        <p>Forward time travel at different rates is real, confirmed, and measurable. GPS satellites, atomic clocks, and astronauts all demonstrate it daily.</p>
+      </div>
+      <div class="concl-card">
+        <div class="card-label">Theoretical</div>
+        <p>Wormholes and higher-dimensional travel remain consistent with General Relativity, but require exotic matter and conditions far beyond current technology.</p>
+      </div>
+      <div class="concl-card">
+        <div class="card-label">Problematic</div>
+        <p>Backward time travel faces the grandfather paradox and deep challenges to causality. The Novikov principle offers one resolution but is untested.</p>
+      </div>
+      <div class="concl-card">
+        <div class="card-label">Cultural</div>
+        <p>Humanity has always sensed that time is strange — from ancient myths of displaced heroes to modern cinema exploring relativity and choice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ SLIDE 13: THANK YOU ════════════════ -->
+<section class="slide slide-end" id="slide-12">
+  <div class="frame frame-tl"></div>
+  <div class="frame frame-br"></div>
+  <div class="frame frame-tr"></div>
+  <div class="frame frame-bl"></div>
+  <div class="content">
+    <div class="ornament anim-fade-up" style="width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--gold),transparent);margin:0 auto 2rem;"></div>
+    <p class="end-big anim-fade-up">Thank You</p>
+    <p class="end-sub anim-fade-up">Time Travel: Science &amp; Fiction</p>
+    <p class="body-text anim-fade-up" style="margin-top:2rem; color: var(--dim); font-size: 1rem;">
+      Questions? Let's explore the universe together.
+    </p>
+    <div style="height:1px;width:100px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:2rem auto 0;" class="anim-fade-up"></div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- Nav -->
+<div class="nav-btns">
+  <button onclick="prevSlide()">← Prev</button>
+  <span class="slide-counter-text" id="counter">01 / 13</span>
+  <button onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+// ── STARS ──
+const sf = document.getElementById('starfield');
+const starCount = 200;
+for (let i = 0; i < starCount; i++) {
+  const s = document.createElement('div');
+  s.classList.add('star');
+  const size = Math.random() * 2.2 + 0.3;
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${Math.random()*100}%; top:${Math.random()*100}%;
+    --dur:${(Math.random()*5+3).toFixed(1)}s;
+    --delay:-${(Math.random()*8).toFixed(1)}s;
+    --min-op:${(Math.random()*0.2+0.05).toFixed(2)};
+    --max-op:${(Math.random()*0.6+0.3).toFixed(2)};
+  `;
+  sf.appendChild(s);
+}
+
+// ── CURSOR ──
+const cur = document.getElementById('cursor');
+const curO = document.getElementById('cursorOuter');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+  curO.style.left = e.clientX + 'px';
+  curO.style.top = e.clientY + 'px';
+});
+
+// ── SLIDES ──
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let current = 0;
+
+// Build dots
+const dotTrack = document.getElementById('dotTrack');
+const dots = [];
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  dotTrack.appendChild(d);
+  dots.push(d);
+});
+
+function goTo(idx) {
+  if (idx === current) return;
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  setTimeout(() => slides[current]?.classList.remove('exit'), 800);
+  current = (idx + total) % total;
+  slides[current].classList.add('active');
+  dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  document.getElementById('progressFill').style.height = ((current + 1) / total * 100) + '%';
+  document.getElementById('counter').textContent = 
+    String(current + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+});
+
+// Initialize
+document.getElementById('progressFill').style.height = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

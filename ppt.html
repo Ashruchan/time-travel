@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Time Travel: Science & Fiction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0c1222;
+  --overlay: linear-gradient(145deg, rgba(12, 18, 34, 0.92) 0%, rgba(15, 23, 42, 0.88) 45%, rgba(17, 24, 39, 0.9) 100%);
+  --text: #e8edf5;
+  --text-muted: rgba(232, 237, 245, 0.72);
+  --accent: #38bdf8;
+  --accent-soft: rgba(56, 189, 248, 0.22);
+  --border: rgba(255, 255, 255, 0.1);
+  --card: rgba(255, 255, 255, 0.04);
+  --radius: 12px;
+  --shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  overflow: hidden;
+  background: var(--bg-deep);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.slide-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: 4.5rem clamp(2rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.55s ease, transform 0.55s ease, visibility 0.55s;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+}
+
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.45);
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  z-index: 2;
+}
+
+.content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1040px;
+  animation: enter 0.65s ease;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 6vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+.title-slide h1 {
+  font-size: clamp(3rem, 7vw, 4.75rem);
+}
+
+h1 + .subtitle {
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lead-rule {
+  width: 64px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0 auto 2.5rem;
+  border-radius: 2px;
+}
+
+h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 3.5vw, 2.65rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  color: #fff;
+  text-align: inherit;
+}
+
+p {
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.75;
+  font-weight: 400;
+  color: var(--text-muted);
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: inherit;
+}
+
+p + p {
+  margin-top: 1rem;
+}
+
+.small {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.group {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.member {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  border-left: 3px solid var(--accent);
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem clamp(1.25rem, 4vw, 2.5rem);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.top-bar span:last-child {
+  color: var(--text);
+  letter-spacing: 0.12em;
+}
+
+.progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  z-index: 101;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.45s ease;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  z-index: 99;
+}
+
+.nav button {
+  padding: 0.6rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(12, 18, 34, 0.65);
+  color: var(--text);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.nav button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: #fff;
+}
+
+.nav button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hint {
+  position: fixed;
+  bottom: 1.25rem;
+  right: clamp(1rem, 3vw, 2rem);
+  z-index: 98;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  text-align: left;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.grid-two h2,
+.grid-two p {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.grid-two .text-col {
+  padding-right: 0.5rem;
+}
+
+.side-image {
+  width: 100%;
+  max-height: min(58vh, 420px);
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.quote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-style: italic;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
+.title-slide .content {
+  text-align: center;
+}
+
+.slide:not(.title-slide) .content:not(.grid-two) {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .grid-two {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .grid-two .text-col {
+    padding-right: 0;
+  }
+
+  .grid-two h2,
+  .grid-two p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hint {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress" id="progress"></div></div>
+<div class="top-bar">
+  <span>Time Travel</span>
+  <span id="slideNumber">01 / 12</span>
+</div>
+
+<div class="slide-container">
+
+<section class="slide title-slide active" style="background-image:url('093ff7a6c165b1959d260d362ec35f05.jpg');">
+<div class="content">
+<p class="eyebrow">Presentation</p>
+<h1>Time Travel</h1>
+<p class="subtitle">Science and fiction — relativity, black holes, dimensions, mythology, and the nature of time.</p>
+<div class="lead-rule"></div>
+<div class="group">
+<div class="member">Student Name 1</div>
+<div class="member">Student Name 2</div>
+<div class="member">Student Name 3</div>
+<div class="member">Student Name 4</div>
+<div class="member">Student Name 5</div>
+<div class="member">Student Name 6</div>
+<div class="member">Student Name 7</div>
+<div class="member">Student Name 8</div>
+<div class="member">Student Name 9</div>
+<div class="member">Student Name 10</div>
+</div>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('10f9e13e152e5129166e59dde6148f33.jpg');">
+<div class="content">
+<p class="eyebrow">Foundations</p>
+<h2>What is Time?</h2>
+<p>
+Time is the continuous progression of events from the past, through the present, and into the future.
+We usually experience time as a line, but in modern physics it is tightly linked with space and gravity.
+</p>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('225d1329eb0cbd3d5ea94557e2f7852b.jpg');">
+<div class="content">
+<p class="eyebrow">Foundations</p>
+<h2>What is Time Travel?</h2>
+<p>
+Time travel is the idea of moving between different moments in time, analogous to motion in space.
+Einstein’s work showed that the laws of physics do not entirely exclude such possibilities.
+</p>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('2640c5437b1d7c3dc87796bcbd63c79c.jpg');">
+<div class="content grid-two">
+<div class="text-col">
+<p class="eyebrow">Physics</p>
+<h2>Einstein and relativity</h2>
+<p>
+According to the theory of relativity, time and space form a single fabric. Clocks run slower at very high speeds or in strong gravitational fields.
+</p>
+<p>
+Einstein described time like a river: near massive objects such as black holes, its flow slows measurably.
+</p>
+</div>
+<img class="side-image" src="28ded9a5ed8a160214b28233cb234db2.jpg" alt="" />
+</div>
+</section>
+
+<section class="slide" style="background-image:url('396f4dea4fd60352b438e62e710d382d.jpg');">
+<div class="content grid-two">
+<div class="text-col">
+<p class="eyebrow">Physics</p>
+<h2>Time dilation</h2>
+<p>
+A well-known illustration appears in <em>Interstellar</em>: near the black hole Gargantua, gravitational time dilation becomes extreme.
+</p>
+<p>
+On Miller’s planet, about one hour corresponded to seven years on Earth — a dramatic but physically grounded idea.
+</p>
+</div>
+<img class="side-image" src="8652bbddfb88d654a62596cf2f7711c8.jpg" alt="" />
+</div>
+</section>
+
+<section class="slide" style="background-image:url('a319697386c13cc6d64dff5797de9f5d.jpg');">
+<div class="content grid-two">
+<div class="text-col">
+<p class="eyebrow">Observation</p>
+<h2>A real-world example</h2>
+<p>
+Astronaut Scott Kelly spent roughly a year on the International Space Station. Relativity and orbital motion mean he aged very slightly less than his twin on Earth — by milliseconds, but measurably.
+</p>
+</div>
+<img class="side-image" src="Scott_Kelly,_Johnson_Space_Center_portrait,_2019_cropped_2_tif.jpg" alt="Scott Kelly portrait" />
+</div>
+</section>
+
+<section class="slide" style="background-image:url('c5048fb58e7f8076a1bea9996942ef61.jpg');">
+<div class="content grid-two">
+<div class="text-col">
+<p class="eyebrow">Speculation</p>
+<h2>Dimensions and higher beings</h2>
+<p>
+We navigate three spatial dimensions; time appears to move in one direction for us.
+</p>
+<p>
+A hypothetical four-dimensional observer might perceive past and future together and move through time in ways we cannot.
+</p>
+</div>
+<img class="side-image" src="cbc52f97bddbef3baac5b09889a78f2b.jpg" alt="" />
+</div>
+</section>
+
+<section class="slide" style="background-image:url('f66a521fff24ba140876f01cbc1463d8.jpg');">
+<div class="content grid-two">
+<div class="text-col">
+<p class="eyebrow">Theory</p>
+<h2>Wormholes</h2>
+<p>
+Wormholes, or Einstein–Rosen bridges, are hypothetical tunnels linking distant regions of spacetime. They are not observed in nature today but remain an active theoretical topic.
+</p>
+</div>
+<img class="side-image" src="idjFg.jpg" alt="" />
+</div>
+</section>
+
+<section class="slide" style="background-image:url('093ff7a6c165b1959d260d362ec35f05.jpg');">
+<div class="content">
+<p class="eyebrow">Culture</p>
+<h2>Mythology and time travel</h2>
+<p>
+In the Vishnu Purana, King Kakudmi visits Brahma Lok with his daughter Revati; when they return, many ages have passed on Earth — a narrative sometimes compared with time dilation.
+</p>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('10f9e13e152e5129166e59dde6148f33.jpg');">
+<div class="content">
+<p class="eyebrow">Limits</p>
+<h2>Paradoxes and constraints</h2>
+<p>
+The grandfather paradox illustrates how backward time travel can clash with consistent causality. Changing the past so that the traveler never exists is logically troublesome.
+</p>
+<p>
+Conservation laws and thermodynamics also suggest that altering history is far from a free rewrite of events.
+</p>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('225d1329eb0cbd3d5ea94557e2f7852b.jpg');">
+<div class="content">
+<p class="eyebrow">Reflection</p>
+<h2>A philosophical view</h2>
+<p class="quote">“We are all time travelers.”</p>
+<p>
+Some people live mentally in the past; others in an imagined future. The present is where experience actually occurs — and where choices matter.
+</p>
+</div>
+</section>
+
+<section class="slide" style="background-image:url('396f4dea4fd60352b438e62e710d382d.jpg');">
+<div class="content">
+<p class="eyebrow">Summary</p>
+<h2>Conclusion</h2>
+<p>
+Forward time travel at different rates is compatible with relativity and has tiny real analogues. Travel into the past faces serious obstacles from causality, thermodynamics, and the ordering of causes and effects.
+</p>
+<p class="small" style="margin-top:2rem;">Thank you.</p>
+</div>
+</section>
+
+</div>
+
+<div class="nav">
+<button type="button" onclick="prevSlide()">Previous</button>
+<button type="button" onclick="nextSlide()">Next</button>
+</div>
+<p class="hint">Click — Next · ← →</p>
+
+<script>
+const slides = document.querySelectorAll(".slide");
+const progress = document.getElementById("progress");
+const slideNumber = document.getElementById("slideNumber");
+let current = 0;
+
+function updateSlides() {
+  slides.forEach((slide, index) => {
+    slide.classList.toggle("active", index === current);
+  });
+  progress.style.width = ((current + 1) / slides.length) * 100 + "%";
+  slideNumber.textContent = `${String(current + 1).padStart(2, "0")} / ${slides.length}`;
+}
+
+function nextSlide() {
+  current = (current + 1) % slides.length;
+  updateSlides();
+}
+
+function prevSlide() {
+  current = (current - 1 + slides.length) % slides.length;
+  updateSlides();
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight") nextSlide();
+  if (e.key === "ArrowLeft") prevSlide();
+});
+
+window.addEventListener("click", (e) => {
+  if (!e.target.closest("button")) nextSlide();
+});
+
+updateSlides();
+</script>
+</body>
+</html>
